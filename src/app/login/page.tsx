@@ -39,7 +39,7 @@ export default function LoginPage() {
        <header className="sticky top-0 z-50 w-full border-b bg-card/80 backdrop-blur-sm">
         <div className="container flex h-16 items-center">
           <CandlestickChart className="h-6 w-6 mr-2 text-primary" />
-          <h1 className="text-xl font-bold text-foreground">PortfolioSage</h1>
+          <h1 className="text-xl font-bold text-foreground">Apnastocks.in</h1>
         </div>
       </header>
       <main className="flex-1 flex items-center justify-center p-4">

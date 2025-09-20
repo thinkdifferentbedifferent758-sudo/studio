@@ -90,7 +90,7 @@ function AnalysisContent() {
         <div className="container flex h-16 items-center justify-between">
            <div className="flex items-center">
             <CandlestickChart className="h-6 w-6 mr-2 text-primary" />
-            <h1 className="text-xl font-bold text-foreground">PortfolioSage</h1>
+            <h1 className="text-xl font-bold text-foreground">Apnastocks.in</h1>
           </div>
            <Button variant="ghost" size="icon" onClick={handleLogout}>
             <LogOut className="h-5 w-5" />
