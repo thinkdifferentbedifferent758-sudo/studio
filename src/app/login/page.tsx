@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -14,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ShieldAlert, CandlestickChart } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -60,6 +62,7 @@ export default function LoginPage() {
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  autoComplete="off"
                 />
               </div>
               <div className="grid gap-2">
@@ -70,6 +73,7 @@ export default function LoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="off"
                 />
               </div>
               {error && (
@@ -86,8 +90,20 @@ export default function LoginPage() {
           </CardContent>
         </Card>
       </main>
-      <footer className="py-4 text-center text-sm text-muted-foreground">
-        Contact: <a href="mailto:rutpatel@apnastocks.in" className="text-primary hover:underline">rutpatel@apnastocks.in</a> | WhatsApp: +91-7990898016
+      <footer className="mt-auto border-t w-full">
+        <div className="container py-8 text-center text-sm text-muted-foreground">
+          <p className="font-semibold text-foreground mb-2">Contact us</p>
+          <div className="flex justify-center items-center gap-x-4 mb-4">
+            <a href="mailto:rutpatel@apnastocks.in" className="text-primary hover:underline">
+              Email: rutpatel@apnastocks.in
+            </a>
+            <span>WhatsApp: +91-7990898016</span>
+          </div>
+          <Separator className="my-4" />
+          <p className="text-xs">
+            © 2024 Apnastocks.in. All rights reserved. The information provided by this tool is for informational purposes only and should not be considered financial advice.
+          </p>
+        </div>
       </footer>
     </div>
   );

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -37,6 +38,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import type { CreateOptimizedPortfolioOutput } from '@/ai/flows/create-optimized-portfolio';
 import { Suspense, useEffect, useState } from 'react';
 import CompetitorChart from '@/components/competitor-chart';
+import { Separator } from '@/components/ui/separator';
 
 const PortfolioPieChart = dynamic(
   () => import('@/components/portfolio-pie-chart'),
@@ -257,8 +259,20 @@ function AnalysisContent() {
             )}
         </div>
       </main>
-      <footer className="py-4 text-center text-sm text-muted-foreground">
-        Contact: <a href="mailto:rutpatel@apnastocks.in" className="text-primary hover:underline">rutpatel@apnastocks.in</a> | WhatsApp: +91-7990898016
+      <footer className="mt-auto border-t w-full">
+        <div className="container py-8 text-center text-sm text-muted-foreground">
+          <p className="font-semibold text-foreground mb-2">Contact us</p>
+          <div className="flex justify-center items-center gap-x-4 mb-4">
+            <a href="mailto:rutpatel@apnastocks.in" className="text-primary hover:underline">
+              Email: rutpatel@apnastocks.in
+            </a>
+            <span>WhatsApp: +91-7990898016</span>
+          </div>
+          <Separator className="my-4" />
+          <p className="text-xs">
+            © 2024 Apnastocks.in. All rights reserved. The information provided by this tool is for informational purposes only and should not be considered financial advice.
+          </p>
+        </div>
       </footer>
     </div>
   );
