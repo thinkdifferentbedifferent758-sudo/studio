@@ -19,8 +19,8 @@ const StockInputSchema = z.object({
 const CreateOptimizedPortfolioInputSchema = z.object({
   stocks: z
     .array(StockInputSchema)
-    .length(5, 'A list of 5 stock objects. No more, no less.')
-    .describe('A list of 5 stocks to analyze and create a portfolio from.'),
+    .min(1)
+    .describe('A list of stocks to analyze and create a portfolio from.'),
 });
 export type CreateOptimizedPortfolioInput = z.infer<
   typeof CreateOptimizedPortfolioInputSchema

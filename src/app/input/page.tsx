@@ -3,7 +3,7 @@
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Bot, CandlestickChart, LoaderCircle, Sparkles, LogOut } from 'lucide-react';
+import { Bot, CandlestickChart, LoaderCircle, Sparkles, LogOut, PlusCircle, XCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -32,7 +32,7 @@ const formSchema = z.object({
   stocks: z.array(z.object({
     ticker: z.string().min(1, 'Ticker is required.').max(5, 'Ticker is too long.'),
     shares: z.coerce.number().min(1, 'Must be > 0.'),
-  })).length(5),
+  })).min(1, 'Please add at least one stock.'),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -65,7 +65,7 @@ export default function InputPage() {
     },
   });
 
-  const { fields } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'stocks',
   });
@@ -119,7 +119,7 @@ export default function InputPage() {
               Analyze Your Stocks
             </CardTitle>
             <CardDescription>
-              Enter 5 stock tickers and the number of shares to get an AI-powered
+              Enter the stock tickers and the number of shares to get an AI-powered
               portfolio analysis.
             </CardDescription>
           </CardHeader>
@@ -131,7 +131,7 @@ export default function InputPage() {
               >
                 <div className="space-y-4">
                   {fields.map((field, index) => (
-                    <div key={field.id} className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+                    <div key={field.id} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-4 items-start">
                        <FormField
                         control={form.control}
                         name={`stocks.${index}.ticker`}
@@ -169,9 +169,31 @@ export default function InputPage() {
                           </FormItem>
                         )}
                       />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="mt-8 text-destructive"
+                        onClick={() => remove(index)}
+                        disabled={fields.length <= 1}
+                      >
+                        <XCircle className="h-5 w-5" />
+                        <span className="sr-only">Remove stock</span>
+                      </Button>
                     </div>
                   ))}
                 </div>
+
+                 <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => append({ ticker: '', shares: 1 })}
+                >
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Add Another Stock
+                </Button>
+
 
                 {error && (
                   <Alert variant="destructive">

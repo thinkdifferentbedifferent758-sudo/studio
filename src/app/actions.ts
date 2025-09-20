@@ -10,7 +10,7 @@ const FormSchema = z.object({
   stocks: z.array(z.object({
     ticker: z.string().min(1).max(5),
     shares: z.coerce.number().min(1, 'Must be at least 1 share.'),
-  })).length(5),
+  })).min(1, 'Please add at least one stock.'),
 });
 
 export async function getPortfolioAnalysis(
@@ -21,7 +21,7 @@ export async function getPortfolioAnalysis(
   if (!validatedFields.success) {
     return {
       data: null,
-      error: 'Invalid input. Please provide 5 valid stock tickers and their share counts.',
+      error: 'Invalid input. Please provide valid stock tickers and their share counts.',
     };
   }
 
