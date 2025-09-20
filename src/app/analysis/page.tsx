@@ -1,6 +1,6 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import {
   CandlestickChart,
   Landmark,
@@ -8,6 +8,7 @@ import {
   Percent,
   PieChartIcon,
   ShieldAlert,
+  LogOut
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -31,7 +32,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import type { CreateOptimizedPortfolioOutput } from '@/ai/flows/create-optimized-portfolio';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
 const PortfolioPieChart = dynamic(
   () => import('@/components/portfolio-pie-chart'),
@@ -42,11 +43,22 @@ const PortfolioPieChart = dynamic(
 );
 
 function AnalysisContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const resultString = searchParams.get('result');
   
   let result: CreateOptimizedPortfolioOutput | null = null;
   let error: string | null = null;
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const authStatus = sessionStorage.getItem('authenticated');
+    if (authStatus !== 'true') {
+      router.push('/login');
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [router]);
 
   if (resultString) {
     try {
@@ -58,19 +70,34 @@ function AnalysisContent() {
     error = "No analysis data found. Please go back and generate a portfolio.";
   }
 
+  const handleLogout = () => {
+    sessionStorage.removeItem('authenticated');
+    router.push('/login');
+  };
+  
+  if (!isAuthenticated) {
+    return null;
+  }
+
 
   return (
     <div className="flex flex-col min-h-screen bg-background font-sans">
       <header className="sticky top-0 z-50 w-full border-b bg-card/80 backdrop-blur-sm">
-        <div className="container flex h-16 items-center">
-          <CandlestickChart className="h-6 w-6 mr-2 text-primary" />
-          <h1 className="text-xl font-bold text-foreground">PortfolioSage</h1>
+        <div className="container flex h-16 items-center justify-between">
+           <div className="flex items-center">
+            <CandlestickChart className="h-6 w-6 mr-2 text-primary" />
+            <h1 className="text-xl font-bold text-foreground">PortfolioSage</h1>
+          </div>
+           <Button variant="ghost" size="icon" onClick={handleLogout}>
+            <LogOut className="h-5 w-5" />
+            <span className="sr-only">Logout</span>
+          </Button>
         </div>
       </header>
 
       <main className="flex-1 container mx-auto p-4 md:p-8">
         <div className="max-w-4xl mx-auto space-y-8">
-            {error && (
+            {error && !result &&(
               <Alert variant="destructive">
                 <ShieldAlert className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>

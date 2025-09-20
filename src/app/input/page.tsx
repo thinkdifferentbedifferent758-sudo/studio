@@ -3,8 +3,9 @@
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Bot, CandlestickChart, LoaderCircle, Sparkles } from 'lucide-react';
+import { Bot, CandlestickChart, LoaderCircle, Sparkles, LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -24,7 +25,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { getPortfolioAnalysis } from '../actions';
-import { useState } from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ShieldAlert } from 'lucide-react';
 
@@ -41,6 +41,16 @@ export default function InputPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+   useEffect(() => {
+    const authStatus = sessionStorage.getItem('authenticated');
+    if (authStatus !== 'true') {
+      router.push('/login');
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [router]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -76,12 +86,28 @@ export default function InputPage() {
     }
   }
 
+  const handleLogout = () => {
+    sessionStorage.removeItem('authenticated');
+    router.push('/login');
+  };
+
+  if (!isAuthenticated) {
+    return null; 
+  }
+
+
   return (
     <div className="flex flex-col min-h-screen bg-background font-sans">
       <header className="sticky top-0 z-50 w-full border-b bg-card/80 backdrop-blur-sm">
-        <div className="container flex h-16 items-center">
-          <CandlestickChart className="h-6 w-6 mr-2 text-primary" />
-          <h1 className="text-xl font-bold text-foreground">PortfolioSage</h1>
+        <div className="container flex h-16 items-center justify-between">
+          <div className="flex items-center">
+            <CandlestickChart className="h-6 w-6 mr-2 text-primary" />
+            <h1 className="text-xl font-bold text-foreground">PortfolioSage</h1>
+          </div>
+          <Button variant="ghost" size="icon" onClick={handleLogout}>
+            <LogOut className="h-5 w-5" />
+            <span className="sr-only">Logout</span>
+          </Button>
         </div>
       </header>
 
