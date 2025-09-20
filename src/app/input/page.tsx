@@ -1,14 +1,9 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import {
-  Bot,
-  CandlestickChart,
-  LoaderCircle,
-  Sparkles,
-} from 'lucide-react';
+import { Bot, CandlestickChart, LoaderCircle, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
@@ -34,26 +29,10 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ShieldAlert } from 'lucide-react';
 
 const formSchema = z.object({
-  stock1: z
-    .string()
-    .min(1, 'Stock ticker is required.')
-    .max(5, 'Ticker is too long.'),
-  stock2: z
-    .string()
-    .min(1, 'Stock ticker is required.')
-    .max(5, 'Ticker is too long.'),
-  stock3: z
-    .string()
-    .min(1, 'Stock ticker is required.')
-    .max(5, 'Ticker is too long.'),
-  stock4: z
-    .string()
-    .min(1, 'Stock ticker is required.')
-    .max(5, 'Ticker is too long.'),
-  stock5: z
-    .string()
-    .min(1, 'Stock ticker is required.')
-    .max(5, 'Ticker is too long.'),
+  stocks: z.array(z.object({
+    ticker: z.string().min(1, 'Ticker is required.').max(5, 'Ticker is too long.'),
+    shares: z.coerce.number().min(1, 'Must be > 0.'),
+  })).length(5),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -66,12 +45,19 @@ export default function InputPage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      stock1: 'GOOGL',
-      stock2: 'AAPL',
-      stock3: 'MSFT',
-      stock4: 'AMZN',
-      stock5: 'TSLA',
+      stocks: [
+        { ticker: 'GOOGL', shares: 10 },
+        { ticker: 'AAPL', shares: 15 },
+        { ticker: 'MSFT', shares: 8 },
+        { ticker: 'AMZN', shares: 5 },
+        { ticker: 'TSLA', shares: 12 },
+      ],
     },
+  });
+
+  const { fields } = useFieldArray({
+    control: form.control,
+    name: 'stocks',
   });
 
   async function onSubmit(values: FormValues) {
@@ -90,14 +76,6 @@ export default function InputPage() {
     }
   }
 
-  const stockInputs: (keyof FormValues)[] = [
-    'stock1',
-    'stock2',
-    'stock3',
-    'stock4',
-    'stock5',
-  ];
-
   return (
     <div className="flex flex-col min-h-screen bg-background font-sans">
       <header className="sticky top-0 z-50 w-full border-b bg-card/80 backdrop-blur-sm">
@@ -115,39 +93,57 @@ export default function InputPage() {
               Analyze Your Stocks
             </CardTitle>
             <CardDescription>
-              Enter 5 stock tickers to get an AI-powered portfolio analysis and
-              suggested allocation.
+              Enter 5 stock tickers and the number of shares to get an AI-powered
+              portfolio analysis.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4"
+                className="space-y-6"
               >
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {stockInputs.map((name, index) => (
-                    <FormField
-                      key={name}
-                      control={form.control}
-                      name={name}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Stock {index + 1}</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="e.g., AAPL"
-                              {...field}
-                              onInput={(e) => {
-                                e.currentTarget.value = e.currentTarget.value.toUpperCase();
-                                field.onChange(e);
-                              }}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                <div className="space-y-4">
+                  {fields.map((field, index) => (
+                    <div key={field.id} className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+                       <FormField
+                        control={form.control}
+                        name={`stocks.${index}.ticker`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Stock {index + 1} Ticker</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="e.g., AAPL"
+                                {...field}
+                                onInput={(e) => {
+                                  e.currentTarget.value = e.currentTarget.value.toUpperCase();
+                                  field.onChange(e);
+                                }}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                       <FormField
+                        control={form.control}
+                        name={`stocks.${index}.shares`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Shares</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="e.g., 10"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   ))}
                 </div>
 
@@ -158,7 +154,7 @@ export default function InputPage() {
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
-                
+
                 <Button
                   type="submit"
                   className="w-full mt-4 bg-accent hover:bg-accent/90 text-accent-foreground"

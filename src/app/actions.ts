@@ -7,11 +7,10 @@ import {
 import { z } from 'zod';
 
 const FormSchema = z.object({
-  stock1: z.string().min(1).max(5),
-  stock2: z.string().min(1).max(5),
-  stock3: z.string().min(1).max(5),
-  stock4: z.string().min(1).max(5),
-  stock5: z.string().min(1).max(5),
+  stocks: z.array(z.object({
+    ticker: z.string().min(1).max(5),
+    shares: z.coerce.number().min(1, 'Must be at least 1 share.'),
+  })).length(5),
 });
 
 export async function getPortfolioAnalysis(
@@ -22,12 +21,15 @@ export async function getPortfolioAnalysis(
   if (!validatedFields.success) {
     return {
       data: null,
-      error: 'Invalid input. Please provide 5 valid stock tickers.',
+      error: 'Invalid input. Please provide 5 valid stock tickers and their share counts.',
     };
   }
 
   try {
-    const stocks = Object.values(validatedFields.data).map((s) => s.toUpperCase());
+    const stocks = validatedFields.data.stocks.map((s) => ({
+      ticker: s.ticker.toUpperCase(),
+      shares: s.shares,
+    }));
     const result = await createOptimizedPortfolio({ stocks });
     return { data: result, error: null };
   } catch (e) {
