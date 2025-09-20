@@ -8,7 +8,9 @@ import {
   Percent,
   PieChartIcon,
   ShieldAlert,
-  LogOut
+  LogOut,
+  BarChart,
+  Briefcase
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -19,6 +21,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  CardDescription
 } from '@/components/ui/card';
 import {
   Table,
@@ -33,6 +36,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import type { CreateOptimizedPortfolioOutput } from '@/ai/flows/create-optimized-portfolio';
 import { Suspense, useEffect, useState } from 'react';
+import CompetitorChart from '@/components/competitor-chart';
 
 const PortfolioPieChart = dynamic(
   () => import('@/components/portfolio-pie-chart'),
@@ -168,6 +172,69 @@ function AnalysisContent() {
                     </Table>
                   </CardContent>
                 </Card>
+
+                 {result.competitorAnalysis && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Briefcase className="h-6 w-6" />
+                        Competitor Analysis
+                      </CardTitle>
+                       <CardDescription>
+                        {result.competitorAnalysis.summary}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                       <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Competitor</TableHead>
+                            <TableHead className="text-right">
+                              Market Cap (B)
+                            </TableHead>
+                             <TableHead className="text-right">P/E Ratio</TableHead>
+                             <TableHead className="text-right">
+                              Dividend Yield
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {result.competitorAnalysis.competitors.map((c) => (
+                            <TableRow key={c.ticker}>
+                              <TableCell>
+                                <div className="font-medium">{c.ticker}</div>
+                                <div className="text-sm text-muted-foreground">
+                                  {c.name}
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-right font-mono">
+                                ${c.marketCap.toFixed(2)}
+                              </TableCell>
+                              <TableCell className="text-right font-mono">
+                                {c.peRatio.toFixed(2)}
+                              </TableCell>
+                               <TableCell className="text-right font-mono">
+                                {c.dividendYield.toFixed(2)}%
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>>
+
+                       <div>
+                        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                           <BarChart className="h-5 w-5" />
+                          Metrics Comparison
+                        </h3>
+                         <CompetitorChart
+                          portfolio={result.portfolio}
+                          competitors={result.competitorAnalysis.competitors}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
 
                 <Card>
                   <CardHeader>

@@ -26,6 +26,16 @@ export type CreateOptimizedPortfolioInput = z.infer<
   typeof CreateOptimizedPortfolioInputSchema
 >;
 
+const CompetitorStockSchema = z.object({
+  ticker: z.string().describe('The competitor stock ticker symbol.'),
+  name: z.string().describe("The competitor's company name."),
+  marketCap: z.number().describe("The competitor's market capitalization in billions of USD."),
+  peRatio: z.number().describe("The competitor's Price-to-Earnings (P/E) ratio."),
+  dividendYield: z
+    .number()
+    .describe("The competitor's dividend yield as a percentage."),
+});
+
 const CreateOptimizedPortfolioOutputSchema = z.object({
   portfolio: z
     .array(
@@ -40,7 +50,21 @@ const CreateOptimizedPortfolioOutputSchema = z.object({
     .describe(
       'The optimized portfolio with stock allocations and risk assessments.'
     ),
-  analysis: z.string().describe('The analysis of portfolio.'),
+  analysis: z.string().describe('The analysis of the portfolio.'),
+  competitorAnalysis: z
+    .object({
+      summary: z
+        .string()
+        .describe(
+          'A summary of how the portfolio compares to key competitors.'
+        ),
+      competitors: z
+        .array(CompetitorStockSchema)
+        .describe(
+          'A list of 3-5 key competitor stocks with their financial metrics.'
+        ),
+    })
+    .describe('An analysis of the portfolio against its main competitors.'),
 });
 export type CreateOptimizedPortfolioOutput = z.infer<
   typeof CreateOptimizedPortfolioOutputSchema
@@ -63,6 +87,8 @@ const createOptimizedPortfolioPrompt = ai.definePrompt({
   Pay special attention to adjust weighting of securities as appropriate based on market trends and correlation. The number of shares represents the user's current holdings and should influence your analysis.
   
   Identify any stocks that may pose a higher risk to the portfolio and flag them accordingly.
+
+  Also, provide an analysis of the created portfolio against 3-5 of its main competitors. For each competitor, provide their stock ticker, name, market capitalization (in billions), P/E ratio, and dividend yield (as a percentage). Include a summary of this competitive analysis.
 
   Present the portfolio with suggested allocations for each stock, highlighting any potentially risky stocks.
   \nStocks:
