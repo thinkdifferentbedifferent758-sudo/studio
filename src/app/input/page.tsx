@@ -220,6 +220,9 @@ export default function InputPage() {
           </CardContent>
         </Card>
       </main>
+      <footer className="py-4 text-center text-sm text-muted-foreground">
+        Contact: <a href="mailto:rutpatel@apnastocks.in" className="text-primary hover:underline">rutpatel@apnastocks.in</a> | WhatsApp: +91-7990898016
+      </footer>
     </div>
   );
 }

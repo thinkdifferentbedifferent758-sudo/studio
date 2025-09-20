@@ -57,7 +57,7 @@ export default function LoginPage() {
                 <Input
                   id="username"
                   type="text"
-                  placeholder="e.g. Rut"
+                  placeholder="Username"
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -87,6 +87,9 @@ export default function LoginPage() {
           </CardContent>
         </Card>
       </main>
+      <footer className="py-4 text-center text-sm text-muted-foreground">
+        Contact: <a href="mailto:rutpatel@apnastocks.in" className="text-primary hover:underline">rutpatel@apnastocks.in</a> | WhatsApp: +91-7990898016
+      </footer>
     </div>
   );
 }
