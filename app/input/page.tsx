@@ -32,7 +32,7 @@ import { Separator } from '@/components/ui/separator';
 
 const formSchema = z.object({
   stocks: z.array(z.object({
-    ticker: z.string().min(1, 'Ticker is required.').max(50, 'Ticker is too long.'),
+    ticker: z.string().min(1, 'Ticker is required.').max(8, 'Ticker is too long.'),
     shares: z.coerce.number().min(1, 'Must be > 0.'),
   })).min(1, 'Please add at least one stock.'),
 });
