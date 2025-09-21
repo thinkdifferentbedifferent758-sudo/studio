@@ -101,7 +101,7 @@ export default function LoginPage() {
           </div>
           <Separator className="my-4" />
           <p className="text-xs">
-            © 2024 Apnastocks.in. All rights reserved. The information provided by this tool is for informational purposes only and should not be considered financial advice.
+            © 2025 Apnastocks.in. All rights reserved. The information provided by this tool is for informational purposes only and should not be considered financial advice.
           </p>
         </div>
       </footer>
