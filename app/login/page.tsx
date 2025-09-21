@@ -48,9 +48,7 @@ export default function LoginPage() {
         <Card className="w-full max-w-sm">
           <CardHeader>
             <CardTitle className="text-2xl">Login</CardTitle>
-            <CardDescription>
-              Enter your credentials to access your portfolio analysis.
-            </CardDescription>
+            
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="grid gap-4">
